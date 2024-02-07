@@ -2,24 +2,24 @@ package com.example.demo.service;
 
 import com.example.demo.model.Post;
 import org.springframework.stereotype.Service;
+import com.example.demo.repository.PostRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 @Service
 public class PostService {
     private Long index = 0L;
-    private List<Post> posts = new ArrayList<>() {{
-        add(new Post(index++, "доброе утро страна", new Date()));
-        add(new Post(index++, "корни", new Date()));
-        add(new Post(index++, "lol", new Date()));
-    }};
+    @Autowired
+    PostRepository postRepository;
     public List<Post> listAllPosts() {
-        return posts;
+        return StreamSupport.stream(postRepository.findAll().spliterator(), false).toList();
     }
 
     public void create(String text) {
-        posts.add(new Post(index++, text, new Date()));
+        Post post = new Post(null, text, new Date());
+        postRepository.save(post);
     }
 }
